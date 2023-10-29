@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/home.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"> -->
+    <!-- FontAweome CDN Link for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+
+    <title>Document</title>
+</head>
+<body>
+    <!-- <h1>Hello World</h1> -->
+    <div class="heabg">
+        <div class="heading">
+            <h2>Restaurant Review Sentiment Analysis :</h2>
+        </div>
+    </div>
+
+    <div class="outer">
+        <div class="covering">
+            <form id="formid" class="fo">
+                    <h1>Type the review below :</h1>
+                    <div class="form-field">
+                            <textarea name="review" class="textinput textInput form-control" id="review" required></textarea>
+                    </div>
+                    <div class="form-field">
+                    <button class="btn predict" style="background-color: black;">Predict</button>
+                    </div>
+            
+            </form>
+        </div>  
+    </div>
+    <div>
+        
+        <div class="result-good hide">
+            <button class="btn X-good">X</button>
+            <div class="image-good">
+                <img src="../static/images/good.jpg" alt="">
+            </div>
+            <div class="text-good">
+                <h2>Congrats! you have a Good Review</h2>
+            </div>
+        </div>
+    <div class="result-bad hide">
+            <button class="btn X-bad">X</button>
+            <div class="image-bad">
+                <img src="../static/images/sad.jpg" alt="">
+            </div>
+            <div class="text-bad">
+                <h2>Oops, you have a Bad Review</h2>
+            </div>
+        </div>
+    </div>
+    <div class="result-neutral hide">
+        <button class="btn X-neutral">X</button>
+        <div class="image-neutral">
+            <img src="../static/images/neutral.jpg" alt="">
+        </div>
+        <div class="text-neutral">
+            <h2>Gear Up!! you have a Neutral Review</h2>
+        </div>
+    </div>
+</div>
+
+
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+
+    const good=document.querySelector('.result-good');
+    const bad=document.querySelector('.result-bad');
+    const neutral=document.querySelector('.result-neutral');
+    const Xgood=document.querySelector('.X-good')
+    const Xbad=document.querySelector('.X-bad')
+    const Xneutral=document.querySelector('.X-neutral')
+    $(document).ready(function(){
+        $('.fo').on('click','.predict',function(er){
+            er.preventDefault()
+            console.log("llll")
+            // const e=document.querySelector("textinput").val
+            var e=$("#review").val();
+            console.log(e)
+            console.log("sshh")
+            $.ajax({
+                type: "post",
+                url: '{{url_for("predict")}}',
+                headers: { "X-CSRFToken": '{{csrf_token}}' },
+                data: {
+                    review:e,
+                },
+                datatype: "json",
+                success: function(response) {
+                    console.log(response)
+                    console.log(response.prediction)
+                    if(response.prediction===2){
+                        good.classList.remove('hide');
+                        bad.classList.remove('hide');
+                        neutral.classList.remove('hide');
+                        bad.classList.add('hide');
+                        neutral.classList.add('hide');                       
+                    }
+                    else if(response.prediction===1){
+                        good.classList.remove('hide');
+                        bad.classList.remove('hide');
+                        neutral.classList.remove('hide');
+                        bad.classList.add('hide');
+                        good.classList.add('hide');                           
+                    }else{
+                        good.classList.remove('hide');
+                        bad.classList.remove('hide');
+                        neutral.classList.remove('hide');
+                        good.classList.add('hide');
+                        neutral.classList.add('hide');   
+                    }
+
+                },
+                error: function(response){
+                    console.log(response)
+                }
+
+        })
+    })
+    console.log("done")
+    });
+    
+    const remove=function(){
+        good.classList.remove('hide');
+        bad.classList.remove('hide');
+        neutral.classList.remove('hide');
+        good.classList.add('hide');
+        neutral.classList.add('hide');  
+        bad.classList.add('hide')
+    }
+
+    // $('result-good').on('click','.good',remove);
+    Xgood.addEventListener('click',remove)
+    Xbad.addEventListener('click',remove)
+    Xneutral.addEventListener('click',remove)
+</script>
+</html>
